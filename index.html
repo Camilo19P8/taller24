@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="static/styles.css" />
+    <title>Inicio de Sesión</title>
+  </head>
+  <body>
+    <h1>Inicio de Sesión</h1>
+    <div>
+      <form id="loginForm" method="POST">
+        <label for="email">Correo electrónico:</label>
+        <input type="email" name="email" placeholder="Email" required />
+
+        <label for="codigoUsuario">Código de autenticación:</label>
+        <input
+          type="text"
+          name="codigoUsuario"
+          placeholder="Código de autenticación"
+          required
+        />
+
+        <input type="submit" value="Iniciar Sesión" />
+      </form>
+
+      <div id="notification" class="notification" style="display: none">
+        Código incorrecto. Inténtalo de nuevo.
+      </div>
+
+      <a href="/register.html" class="register-button">Registrarse</a>
+    </div>
+
+    <script>
+      document.getElementById("loginForm").onsubmit = async function (event) {
+        event.preventDefault(); // Evita el envío inmediato
+        const email = event.target.email.value;
+        const codigoUsuario = event.target.codigoUsuario.value;
+
+        const response = await fetch("/.netlify/functions/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, codigoUsuario }),
+        });
+
+        const result = await response.json();
+
+        if (response.status === 401) {
+          document.getElementById("notification").style.display = "block";
+        } else if (response.status === 200) {
+          alert("Inicio de sesión exitoso");
+          window.location.href = "/estudiantes.html"; // Redirige a la página de estudiantes
+        }
+      };
+    </script>
+  </body>
+</html>
